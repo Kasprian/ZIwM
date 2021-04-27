@@ -1,7 +1,7 @@
-import pandas as pd
 import matplotlib.pyplot as plt
-
+import pandas as pd
 from sklearn.feature_selection import SelectKBest, f_classif
+from .mlp import mlp
 
 columns = [
         'Clump Thickness',
@@ -34,6 +34,9 @@ if __name__ == '__main__':
     for i, j in enumerate(sortedScore, 1):
         print(f"{i}. {j[0]} {round(j[1], 2)}")
     r = sorted(sortedScore, key=lambda x: x[1])
+
+    results = mlp(classification, features)
+    # dorobić dodawanie cech, t-student
 
     plt.figure(figsize=(15, 8))
     plt.style.use("ggplot")

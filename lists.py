@@ -11,15 +11,15 @@ columns = [
         'Class'
     ]
 
-params = [{'hidden_layer_sizes': (11,), 'solver': 'sgd', 'momentum': 0,
-           'nesterovs_momentum': False},
-          {'hidden_layer_sizes': (11,), 'solver': 'sgd', 'momentum': 0.9,
-           'nesterovs_momentum': False},
+params = [{'hidden_layer_sizes': (8,), 'solver': 'sgd', 'momentum': 0,
+           'nesterovs_momentum': False, 'max_iter': 500},
+          {'hidden_layer_sizes': (8,), 'solver': 'sgd', 'momentum': 0.9,
+           'nesterovs_momentum': False, 'max_iter': 500},
           {'hidden_layer_sizes': (15,), 'solver': 'sgd', 'momentum': 0,
-           'nesterovs_momentum': False},
+           'nesterovs_momentum': False, 'max_iter': 500},
           {'hidden_layer_sizes': (15,), 'solver': 'sgd', 'momentum': 0.9,
-           'nesterovs_momentum': False},
-          {'hidden_layer_sizes': (20,), 'solver': 'sgd', 'momentum': 0,
-           'nesterovs_momentum': False},
-          {'hidden_layer_sizes': (20,), 'solver': 'sgd', 'momentum': 0.9,
-           'nesterovs_momentum': False}]
+           'nesterovs_momentum': False, 'max_iter': 500},
+          {'hidden_layer_sizes': (23,), 'solver': 'sgd', 'momentum': 0,
+           'nesterovs_momentum': False, 'max_iter': 500},
+          {'hidden_layer_sizes': (23,), 'solver': 'sgd', 'momentum': 0.9,
+           'nesterovs_momentum': False, 'max_iter': 500}]

@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from mlp import mlp, feature_selection
 from lists import columns
+from scipy.stats import ttest_rel
 
 if __name__ == '__main__':
     breast_cancer_data = pd.read_csv('./data/breast-cancer-wisconsin.data', header=None)
@@ -27,7 +28,14 @@ if __name__ == '__main__':
 
     results = mlp(X, y)
 
-    # dorobić dla różnych cech, t-student
+    clf_1 = max(results[0::6])
+    clf_2 = max(results[1::6])
+    clf_3 = max(results[2::6])
+    clf_4 = max(results[3::6])
+    clf_5 = max(results[4::6])
+    clf_6 = max(results[5::6])
+
+    # analiza t-studenta
 
     plt.figure(figsize=(15, 8))
     plt.style.use("ggplot")

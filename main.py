@@ -1,20 +1,8 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.feature_selection import SelectKBest, f_classif
-from .mlp import mlp
-
-columns = [
-        'Clump Thickness',
-        'Uniformity of Cell Size',
-        'Uniformity of Cell Shape',
-        'Marginal Adhesion',
-        'Single Epithelial Cell Size',
-        'Bare Nuclei',
-        'Bland Chromatin',
-        'Normal Nucleoli',
-        'Mitoses',
-        'Class'
-    ]
+from mlp import mlp
+from lists import columns
 
 if __name__ == '__main__':
     breast_cancer_data = pd.read_csv('./data/breast-cancer-wisconsin.data', header=None)
@@ -35,8 +23,12 @@ if __name__ == '__main__':
         print(f"{i}. {j[0]} {round(j[1], 2)}")
     r = sorted(sortedScore, key=lambda x: x[1])
 
-    results = mlp(classification, features)
-    # dorobić dodawanie cech, t-student
+    X = features.to_numpy()
+    y = classification.to_numpy()
+
+    results = mlp(X, y)
+
+    # dorobić dla różnych cech, t-student
 
     plt.figure(figsize=(15, 8))
     plt.style.use("ggplot")

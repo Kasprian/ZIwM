@@ -1,35 +1,23 @@
+import numpy as np
+from sklearn.metrics import accuracy_score
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import RepeatedKFold, cross_val_score
-from numpy import mean
-
-params = [{'hidden_layer_sizes': (11,), 'solver': 'sgd', 'momentum': 0,
-           'nesterovs_momentum': False},
-          {'hidden_layer_sizes': (11,), 'solver': 'sgd', 'momentum': 0.9,
-           'nesterovs_momentum': False},
-          {'hidden_layer_sizes': (15,), 'solver': 'sgd', 'momentum': 0,
-           'nesterovs_momentum': False},
-          {'hidden_layer_sizes': (15,), 'solver': 'sgd', 'momentum': 0.9,
-           'nesterovs_momentum': False},
-          {'hidden_layer_sizes': (20,), 'solver': 'sgd', 'momentum': 0,
-           'nesterovs_momentum': False},
-          {'hidden_layer_sizes': (20,), 'solver': 'sgd', 'momentum': 0.9,
-           'nesterovs_momentum': False}]
-
-# sprawdzić czy dobre parametry
-
-
-def evaluate_model(clf, X, y):
-    rkf = RepeatedKFold(n_splits=2, n_repeats=5, random_state=1)
-    scores = cross_val_score(clf, X, y, scoring='accuracy', cv=rkf,
-                             n_jobs=-1)
-    return scores
+from lists import params
 
 
 def mlp(X, y):
-    results = []
     for param in params:
+        scores = []
         clf = MLPClassifier(**param)
-        scores = evaluate_model(clf, X, y)
-        # tutaj obrobić tabele z wynikami i uśrednić
-        results.append(scores)
-    return results
+        rkf = RepeatedKFold(n_splits=2, n_repeats=5, random_state=1234)
+        for train_index, test_index in rkf.split(X):
+            X_train, X_test = X[train_index], X[test_index]
+            y_train, y_test = y[train_index], y[test_index]
+            clf.fit(X_train, y_train)
+            predict = clf.predict(X_test)
+            print(predict)
+            scores.append(accuracy_score(y_test, predict))
+
+        mean_score = np.mean(scores)
+        std_score = np.std(scores)
+        print("Accuracy score: %.3f (%.3f)" % (mean_score, std_score))

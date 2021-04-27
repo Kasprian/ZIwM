@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-from sklearn.feature_selection import SelectKBest, f_classif
-from mlp import mlp
+from mlp import mlp, feature_selection
 from lists import columns
 
 if __name__ == '__main__':
@@ -12,11 +11,11 @@ if __name__ == '__main__':
     breast_cancer_data = breast_cancer_data[breast_cancer_data['Bare Nuclei'] != '?']
     breast_cancer_data['Bare Nuclei'] = breast_cancer_data['Bare Nuclei'].astype('int')
 
-    classification = breast_cancer_data['Class']
     features = breast_cancer_data.drop('Class', axis=1)
+    classification = breast_cancer_data['Class']
 
-    select = SelectKBest(score_func=f_classif, k=9).fit(features, classification)
-    scores = list(zip(features.columns, select.scores_))
+    fit_x, result = feature_selection(features, classification, 9)
+    scores = list(zip(features.columns, result))
     sortedScore = sorted(scores, key=lambda x: x[1], reverse=True)
     print('Ranking:')
     for i, j in enumerate(sortedScore, 1):
@@ -38,4 +37,3 @@ if __name__ == '__main__':
     plt.rc('ytick', labelsize=14)
     plt.show
     plt.savefig('plot.png')
-

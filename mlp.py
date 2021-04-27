@@ -6,13 +6,13 @@ from sklearn.feature_selection import SelectKBest, f_classif
 from lists import params
 
 
-def feature_selection(features,classification, n_best):
+def feature_selection(features, classification, n_best):
     select = SelectKBest(score_func=f_classif, k=n_best).fit(features, classification)
     fit_x = select.transform(features)
     return fit_x, select.scores_
 
 def mlp(X, y):
-    for i in range(1, 9):
+    for i in range(1, 10):
         fit_x, _ = feature_selection(X, y, i)
         for param in params:
             scores = []

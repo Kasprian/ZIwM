@@ -3,8 +3,13 @@ import pandas as pd
 from mlp import mlp, feature_selection
 from lists import columns
 from scipy.stats import ttest_rel
+from scipy.stats import ttest_ind
+import numpy as np
 
 if __name__ == '__main__':
+
+    # Część 1.
+
     breast_cancer_data = pd.read_csv('./data/breast-cancer-wisconsin.data', header=None)
     breast_cancer_data.drop(0, axis=1, inplace=True)
     breast_cancer_data.columns = columns
@@ -26,16 +31,31 @@ if __name__ == '__main__':
     X = features.to_numpy()
     y = classification.to_numpy()
 
+    # Część 2.
+
     results = mlp(X, y)
 
-    clf_1 = max(results[0::6])
-    clf_2 = max(results[1::6])
-    clf_3 = max(results[2::6])
-    clf_4 = max(results[3::6])
-    clf_5 = max(results[4::6])
-    clf_6 = max(results[5::6])
+    clf_1 = results[0::6]
+    clf_2 = results[1::6]
+    clf_3 = results[2::6]
+    clf_4 = results[3::6]
+    clf_5 = results[4::6]
+    clf_6 = results[5::6]
+
+    # średnie wyniki dla każdego z eksperymentów 6x9
+
+    best_scores = [clf_1, clf_2, clf_3, clf_4, clf_5, clf_6]
 
     # analiza t-studenta
+
+    alfa = .05
+    t_statistic = np.zeros((6, 6))
+    p_value = np.zeros((6, 6))
+
+    for i in range(0, 6):
+        for j in range(0, 6):
+            t_statistic[i, j], p_value[i, j] = ttest_ind(best_scores[i], best_scores[j])
+    print("t-statistic:\n", t_statistic, "\n\np-value:\n", p_value)
 
     plt.figure(figsize=(15, 8))
     plt.style.use("ggplot")

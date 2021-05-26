@@ -12,14 +12,14 @@ columns = [
     ]
 
 params = [{'hidden_layer_sizes': (8,), 'solver': 'sgd', 'momentum': 0,
-           'nesterovs_momentum': False, 'max_iter': 500},
+           'nesterovs_momentum': False, 'max_iter': 500, 'random_state': 1234},
           {'hidden_layer_sizes': (8,), 'solver': 'sgd', 'momentum': 0.9,
-           'nesterovs_momentum': False, 'max_iter': 500},
+           'nesterovs_momentum': False, 'max_iter': 500, 'random_state': 1234},
           {'hidden_layer_sizes': (15,), 'solver': 'sgd', 'momentum': 0,
-           'nesterovs_momentum': False, 'max_iter': 500},
+           'nesterovs_momentum': False, 'max_iter': 500, 'random_state': 1234},
           {'hidden_layer_sizes': (15,), 'solver': 'sgd', 'momentum': 0.9,
-           'nesterovs_momentum': False, 'max_iter': 500},
+           'nesterovs_momentum': False, 'max_iter': 500, 'random_state': 1234},
           {'hidden_layer_sizes': (23,), 'solver': 'sgd', 'momentum': 0,
-           'nesterovs_momentum': False, 'max_iter': 500},
+           'nesterovs_momentum': False, 'max_iter': 500, 'random_state': 1234},
           {'hidden_layer_sizes': (23,), 'solver': 'sgd', 'momentum': 0.9,
-           'nesterovs_momentum': False, 'max_iter': 500}]
+           'nesterovs_momentum': False, 'max_iter': 500, 'random_state': 1234}]

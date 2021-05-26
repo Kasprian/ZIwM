@@ -34,17 +34,25 @@ if __name__ == '__main__':
     # Część 2.
 
     results = mlp(X, y)
+    means = []
 
-    clf_1 = results[0::6]
-    clf_2 = results[1::6]
-    clf_3 = results[2::6]
-    clf_4 = results[3::6]
-    clf_5 = results[4::6]
-    clf_6 = results[5::6]
-
-    # średnie wyniki dla każdego z eksperymentów 6x9
+    clf_1 = results[0:90]
+    clf_2 = results[90:180]
+    clf_3 = results[180:270]
+    clf_4 = results[270:360]
+    clf_5 = results[360:450]
+    clf_6 = results[450:540]
 
     best_scores = [clf_1, clf_2, clf_3, clf_4, clf_5, clf_6]
+
+    # prezentacja uśrednionych wyników
+
+    for i in range(0, 6):
+        mean_score = np.mean(results[i*6:(i+1)*6])
+        means.append(mean_score)
+        std_score = np.std(results[i*6:(i+1)*6])
+
+    print(means)
 
     # analiza t-studenta
 

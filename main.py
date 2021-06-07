@@ -1,10 +1,50 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-from mlp import mlp, feature_selection
-from lists import columns
+import warnings
+import numpy as np
 from scipy.stats import ttest_rel
 from scipy.stats import ttest_ind
-import numpy as np
+from sklearn.metrics import accuracy_score
+from sklearn.neural_network import MLPClassifier
+from sklearn.model_selection import RepeatedStratifiedKFold
+from sklearn.feature_selection import SelectKBest, f_classif
+from tabulate import tabulate
+from sklearn.exceptions import ConvergenceWarning
+
+columns = [
+    'Clump Thickness',
+    'Uniformity of Cell Size',
+    'Uniformity of Cell Shape',
+    'Marginal Adhesion',
+    'Single Epithelial Cell Size',
+    'Bare Nuclei',
+    'Bland Chromatin',
+    'Normal Nucleoli',
+    'Mitoses',
+    'Class'
+]
+
+params = [{'hidden_layer_sizes': (10,), 'solver': 'sgd', 'momentum': 0,
+           'nesterovs_momentum': False, 'max_iter': 500, 'random_state': 5},
+          {'hidden_layer_sizes': (10,), 'solver': 'sgd', 'momentum': 0.9,
+           'nesterovs_momentum': True, 'max_iter': 500, 'random_state': 5},
+          {'hidden_layer_sizes': (100,), 'solver': 'sgd', 'momentum': 0,
+           'nesterovs_momentum': False, 'max_iter': 500, 'random_state': 5},
+          {'hidden_layer_sizes': (100,), 'solver': 'sgd', 'momentum': 0.9,
+           'nesterovs_momentum': True, 'max_iter': 500, 'random_state': 5},
+          {'hidden_layer_sizes': (500,), 'solver': 'sgd', 'momentum': 0,
+           'nesterovs_momentum': False, 'max_iter': 500, 'random_state': 5},
+          {'hidden_layer_sizes': (500,), 'solver': 'sgd', 'momentum': 0.9,
+           'nesterovs_momentum': True, 'max_iter': 500, 'random_state': 5}]
+
+warnings.filterwarnings("ignore", category=ConvergenceWarning)
+
+
+def feature_selection(features, classification, n_best):
+    select = SelectKBest(score_func=f_classif, k=n_best).fit(features, classification)
+    fit_X = select.transform(features)
+    return fit_X, select.scores_
+
 
 if __name__ == '__main__':
 
@@ -31,21 +71,30 @@ if __name__ == '__main__':
     X = features.to_numpy()
     y = classification.to_numpy()
 
-    # Część 2.
+    # Esperyment
+    results = []
 
-    results = mlp(X, y)
+    for param in params:  # po kolei klasyfikatory
+        scores = []
+        clf = MLPClassifier(**param)
+        rkf = RepeatedStratifiedKFold(n_splits=2, n_repeats=5, random_state=1234)
+        for train_index, test_index in rkf.split(X, y):
+            best = 0
+            for i in range(1, 9):  # 9 pętli dla każdej liczby cech zaczynając od najlepszej według selekcji
+                fit_X, _ = feature_selection(X, y, i)
+                X_train, X_test = fit_X[train_index], fit_X[test_index]
+                y_train, y_test = y[train_index], y[test_index]
+                clf.fit(X_train, y_train)
+                predict = clf.predict(X_test)
+                score = accuracy_score(y_test, predict)
+                if best < score:
+                    best = score
+            scores.append(score)  # najlepszy wynik dla każdej cechy
+            print(scores)
+        results.append(max(scores))  # najlepszy wynik dla każdego z klasyfikatorów
+        print(results)
 
-    clf_1 = results[0::6]
-    clf_2 = results[1::6]
-    clf_3 = results[2::6]
-    clf_4 = results[3::6]
-    clf_5 = results[4::6]
-    clf_6 = results[5::6]
-
-    # średnie wyniki dla każdego z eksperymentów 6x9
-
-    best_scores = [clf_1, clf_2, clf_3, clf_4, clf_5, clf_6]
-
+    np.save('results', scores)
     # analiza t-studenta
 
     alfa = .05
@@ -54,14 +103,14 @@ if __name__ == '__main__':
 
     for i in range(0, 6):
         for j in range(0, 6):
-            t_statistic[i, j], p_value[i, j] = ttest_ind(best_scores[i], best_scores[j])
+            t_statistic[i, j], p_value[i, j] = ttest_ind(results[i], results[j])
     print("t-statistic:\n", t_statistic, "\n\np-value:\n", p_value)
 
-    plt.figure(figsize=(15, 8))
-    plt.style.use("ggplot")
-    plt.barh(range(len(r)), [s[1] for s in r], align='center')
-    plt.yticks(range(len(r)), [s[0] for s in r])
-    plt.title('Ranking cech')
-    plt.rc('ytick', labelsize=14)
-    plt.show
-    plt.savefig('plot.png')
+    #plt.figure(figsize=(15, 8))
+    #plt.style.use("ggplot")
+    #plt.barh(range(len(r)), [s[1] for s in r], align='center')
+    #plt.yticks(range(len(r)), [s[0] for s in r])
+    #plt.title('Ranking cech')
+    #plt.rc('ytick', labelsize=14)
+    #plt.show
+    #plt.savefig('plot.png')

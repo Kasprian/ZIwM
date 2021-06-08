@@ -86,12 +86,12 @@ if __name__ == '__main__':
                 clf.fit(X_train, y_train)
                 predict = clf.predict(X_test)
                 scores.append(accuracy_score(y_test, predict))  # wynik każdego ksperymentu w ramach jednego foldu
-            mean = np.mean(scores)  # średnia z ostatnich foldów dla danego klasyfikatora z daną liczna cech
-            results[j, i-1] = mean
+            best = max(scores)  # najlepszy wynik z 10 foldów dla danego klasyfikatora z daną liczna cech
+            results[j, i-1] = best
             print(results)
             j = j + 1
 
-    np.save('results', results)
+    np.save('resultsMax', results)
     # analiza t-studenta
 
     alfa = .05

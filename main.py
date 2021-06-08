@@ -85,7 +85,6 @@ if __name__ == '__main__':
 
     # Esperyment
     max_features = 9
-    mean_scores = np.empty((max_features, (len(clfs))))
     for i in range(1, max_features + 1):
         print(str(i) + " features")
         kfold = RepeatedStratifiedKFold(
@@ -99,7 +98,6 @@ if __name__ == '__main__':
                 clf.fit(fit_x[train], y[train])
                 prediction = clf.predict(fit_x[test])
                 scores[clf_id, fold_id] = accuracy_score(y[test], prediction)
-        mean_score = np.mean(scores, axis=1)
         print(scores)
         np.save('results/results_of ' + str(i)+" features", scores)
 

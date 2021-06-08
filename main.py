@@ -2,8 +2,10 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import warnings
 import numpy as np
+from matplotlib import ticker
 from scipy.stats import ttest_rel
 from scipy.stats import ttest_ind
+from sklearn import clone
 from sklearn.metrics import accuracy_score
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import RepeatedStratifiedKFold
@@ -23,19 +25,29 @@ columns = [
     'Mitoses',
     'Class'
 ]
-
-params = [{'hidden_layer_sizes': (10,), 'solver': 'sgd', 'momentum': 0,
-           'nesterovs_momentum': False, 'max_iter': 500, 'random_state': 5},
-          {'hidden_layer_sizes': (10,), 'solver': 'sgd', 'momentum': 0.9,
-           'nesterovs_momentum': True, 'max_iter': 500, 'random_state': 5},
-          {'hidden_layer_sizes': (15,), 'solver': 'sgd', 'momentum': 0,
-           'nesterovs_momentum': False, 'max_iter': 500, 'random_state': 5},
-          {'hidden_layer_sizes': (15,), 'solver': 'sgd', 'momentum': 0.9,
-           'nesterovs_momentum': True, 'max_iter': 500, 'random_state': 5},
-          {'hidden_layer_sizes': (20,), 'solver': 'sgd', 'momentum': 0,
-           'nesterovs_momentum': False, 'max_iter': 500, 'random_state': 5},
-          {'hidden_layer_sizes': (20), 'solver': 'sgd', 'momentum': 0.9,
-           'nesterovs_momentum': True, 'max_iter': 500, 'random_state': 5}]
+clfs = {
+    '256layers_momentum': MLPClassifier(hidden_layer_sizes=(5,),
+                                        max_iter=500, nesterovs_momentum=True,
+                                        solver='sgd', random_state=1234,
+                                        momentum=0.9),
+    '512layers_momentum': MLPClassifier(hidden_layer_sizes=(10,),
+                                        max_iter=500, nesterovs_momentum=True,
+                                        solver='sgd', random_state=1234,
+                                        momentum=0.9),
+    '1024layers_momentum': MLPClassifier(hidden_layer_sizes=(15,),
+                                         max_iter=500, nesterovs_momentum=True,
+                                         solver='sgd', random_state=1234,
+                                         momentum=0.9),
+    '256layers_without': MLPClassifier(hidden_layer_sizes=(5,),
+                                       max_iter=500, solver='sgd', momentum=0,
+                                       random_state=1234),
+    '512layers_without': MLPClassifier(hidden_layer_sizes=(10,),
+                                       max_iter=500, solver='sgd', momentum=0,
+                                       random_state=1234),
+    '1024layers_without': MLPClassifier(hidden_layer_sizes=(15,),
+                                        max_iter=500, solver='sgd', momentum=0,
+                                        random_state=1234),
+}
 
 warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
@@ -72,32 +84,31 @@ if __name__ == '__main__':
     y = classification.to_numpy()
 
     # Esperyment
-    results = np.zeros((6, 9))
-    for i in range(1, 10):
-        j = 0
-        for param in params:  # po kolei klasyfikatory
-            clf = MLPClassifier(**param)
-            rkf = RepeatedStratifiedKFold(n_splits=2, n_repeats=5, random_state=1234)
-            scores = []
-            for train_index, test_index in rkf.split(X, y):
-                fit_X, _ = feature_selection(X, y, i)
-                X_train, X_test = fit_X[train_index], fit_X[test_index]
-                y_train, y_test = y[train_index], y[test_index]
-                clf.fit(X_train, y_train)
-                predict = clf.predict(X_test)
-                scores.append(accuracy_score(y_test, predict))  # wynik każdego ksperymentu w ramach jednego foldu
-            best = max(scores)  # najlepszy wynik z 10 foldów dla danego klasyfikatora z daną liczna cech
-            results[j, i-1] = best
-            print(results)
-            j = j + 1
+    max_features = 9
+    mean_scores = np.empty((max_features, (len(clfs))))
+    for i in range(1, max_features + 1):
+        print(str(i) + " features")
+        kfold = RepeatedStratifiedKFold(
+            n_splits=2, n_repeats=5, random_state=1)
+        scores = np.zeros((len(clfs), 2 * 5))
 
-    np.save('resultsMax', results)
+        for fold_id, (train, test) in enumerate(kfold.split(X, y)):
+            for clf_id, clf_name in enumerate(clfs):
+                fit_x, _ = feature_selection(X, y, i)
+                clf = clone(clfs[clf_name])
+                clf.fit(fit_x[train], y[train])
+                prediction = clf.predict(fit_x[test])
+                scores[clf_id, fold_id] = accuracy_score(y[test], prediction)
+        mean_score = np.mean(scores, axis=1)
+        print(scores)
+        np.save('results/results_of ' + str(i)+" features", scores)
+
     # analiza t-studenta
 
-    alfa = .05
-    t_statistic = np.zeros((6, 6))
-    p_value = np.zeros((6, 6))
-    s = np.array(results)
+    #alfa = .05
+    #t_statistic = np.zeros((6, 6))
+    #p_value = np.zeros((6, 6))
+    #s = np.array(results)
 
     #for i in range(0, 6):
     #    for j in range(0, 6):

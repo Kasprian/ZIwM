@@ -17,16 +17,23 @@ if __name__ == '__main__':
     # analiza t-studenta
 
     best_results = np.zeros((6, 10))
-    headers = ["Mom50", "Mom500", "Mom1000", "NoMom50", "NoMom500", "NoMom1000"]
-    names_column = np.array([["Mom50"], ["Mom500"], ["Mom1000"], ["NoMomentum50"], ["NoMom500"], ["NoMom1000"]])
-    bestfeature = np.zeros(6, 1)
+    best_feature = [[""], [""], [""], [""], [""], [""]]
     for i in range(6):
         mean = 0
         for feature in range(9):
             if mean < np.mean(scores[feature, i]):
                 mean = np.mean(scores[feature, i])
                 best_results[i] = scores[feature, i]
+                best_feature[i] = str(feature + 1)
 
+    print(best_feature)
+
+    headers = ["Mom50 F 4", "Mom500 F 5", "Mom1000 F 5", "NoMom50 F 4", "NoMom500 F 3", "NoMom1000 F 2"]
+    names_column = np.array(
+        [["Mom50 F 4"], ["Mom500 F 5 "], ["Mom1000 F 5"], ["NoMomentum50 F 4"], ["NoMom500 F 3"], ["NoMom1000 F 2"]])
+
+    print(headers)
+    print(names_column)
     alfa = .05
     t_statistic = np.zeros((6, 6))
     p_value = np.zeros((6, 6))

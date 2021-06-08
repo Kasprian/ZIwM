@@ -91,23 +91,3 @@ if __name__ == '__main__':
         print(scores)
         np.save('results/results_of ' + str(i) + " features", scores)
 
-    # analiza t-studenta
-
-    # alfa = .05
-    # t_statistic = np.zeros((6, 6))
-    # p_value = np.zeros((6, 6))
-    # s = np.array(results)
-
-    # for i in range(0, 6):
-    #    for j in range(0, 6):
-    #        t_statistic[i, j], p_value[i, j] = ttest_rel(s[i], s[j])
-    # print("t-statistic:\n", t_statistic, "\n\np-value:\n", p_value)
-
-    # plt.figure(figsize=(15, 8))
-    # plt.style.use("ggplot")
-    # plt.barh(range(len(r)), [s[1] for s in r], align='center')
-    # plt.yticks(range(len(r)), [s[0] for s in r])
-    # plt.title('Ranking cech')
-    # plt.rc('ytick', labelsize=14)
-    # plt.show
-    # plt.savefig('plot.png')

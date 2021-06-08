@@ -26,27 +26,18 @@ columns = [
     'Class'
 ]
 clfs = {
-    '256layers_momentum': MLPClassifier(hidden_layer_sizes=(5,),
-                                        max_iter=500, nesterovs_momentum=True,
-                                        solver='sgd', random_state=1234,
-                                        momentum=0.9),
-    '512layers_momentum': MLPClassifier(hidden_layer_sizes=(10,),
-                                        max_iter=500, nesterovs_momentum=True,
-                                        solver='sgd', random_state=1234,
-                                        momentum=0.9),
-    '1024layers_momentum': MLPClassifier(hidden_layer_sizes=(15,),
-                                         max_iter=500, nesterovs_momentum=True,
-                                         solver='sgd', random_state=1234,
-                                         momentum=0.9),
-    '256layers_without': MLPClassifier(hidden_layer_sizes=(5,),
-                                       max_iter=500, solver='sgd', momentum=0,
-                                       random_state=1234),
-    '512layers_without': MLPClassifier(hidden_layer_sizes=(10,),
-                                       max_iter=500, solver='sgd', momentum=0,
-                                       random_state=1234),
-    '1024layers_without': MLPClassifier(hidden_layer_sizes=(15,),
-                                        max_iter=500, solver='sgd', momentum=0,
-                                        random_state=1234),
+    '50layers_momentum': MLPClassifier(hidden_layer_sizes=(50,), max_iter=500, nesterovs_momentum=True, solver='sgd',
+                                       random_state=1234, momentum=0.9),
+    '500layers_momentum': MLPClassifier(hidden_layer_sizes=(500,), max_iter=500, nesterovs_momentum=True, solver='sgd',
+                                        random_state=1234, momentum=0.9),
+    '1000layers_momentum': MLPClassifier(hidden_layer_sizes=(1000,), max_iter=500, nesterovs_momentum=True,
+                                         solver='sgd', random_state=1234, momentum=0.9),
+    '50layers_no_momentum': MLPClassifier(hidden_layer_sizes=(50,), max_iter=500, nesterovs_momentum=False,
+                                          solver='sgd', random_state=1234, momentum=0),
+    '500layers_no_momentum': MLPClassifier(hidden_layer_sizes=(500,), max_iter=500, nesterovs_momentum=False,
+                                           solver='sgd', random_state=1234, momentum=0),
+    '1000layers_no_momentum': MLPClassifier(hidden_layer_sizes=(1000,), max_iter=500, nesterovs_momentum=False,
+                                            solver='sgd', random_state=1234, momentum=0),
 }
 
 warnings.filterwarnings("ignore", category=ConvergenceWarning)
@@ -90,7 +81,6 @@ if __name__ == '__main__':
         kfold = RepeatedStratifiedKFold(
             n_splits=2, n_repeats=5, random_state=1)
         scores = np.zeros((len(clfs), 2 * 5))
-
         for fold_id, (train, test) in enumerate(kfold.split(X, y)):
             for clf_id, clf_name in enumerate(clfs):
                 fit_x, _ = feature_selection(X, y, i)
@@ -99,19 +89,19 @@ if __name__ == '__main__':
                 prediction = clf.predict(fit_x[test])
                 scores[clf_id, fold_id] = accuracy_score(y[test], prediction)
         print(scores)
-        np.save('results/results_of ' + str(i)+" features", scores)
+        np.save('results/results_of ' + str(i) + " features", scores)
 
     # analiza t-studenta
 
-    #alfa = .05
-    #t_statistic = np.zeros((6, 6))
-    #p_value = np.zeros((6, 6))
-    #s = np.array(results)
+    # alfa = .05
+    # t_statistic = np.zeros((6, 6))
+    # p_value = np.zeros((6, 6))
+    # s = np.array(results)
 
-    #for i in range(0, 6):
+    # for i in range(0, 6):
     #    for j in range(0, 6):
     #        t_statistic[i, j], p_value[i, j] = ttest_rel(s[i], s[j])
-    #print("t-statistic:\n", t_statistic, "\n\np-value:\n", p_value)
+    # print("t-statistic:\n", t_statistic, "\n\np-value:\n", p_value)
 
     # plt.figure(figsize=(15, 8))
     # plt.style.use("ggplot")

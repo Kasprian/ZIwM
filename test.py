@@ -19,12 +19,15 @@ if __name__ == '__main__':
     best_results = np.zeros((6, 10))
     best_feature = [[""], [""], [""], [""], [""], [""]]
     for i in range(6):
+        print("model " + str(i + 1) + " & ", end='')
         mean = 0
         for feature in range(9):
+            print(str(round(np.mean(scores[feature, i]), 4)) + " & ", end='')
             if mean < np.mean(scores[feature, i]):
                 mean = np.mean(scores[feature, i])
                 best_results[i] = scores[feature, i]
                 best_feature[i] = str(feature + 1)
+        print("\\\\")
 
     print(best_feature)
 

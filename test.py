@@ -18,15 +18,14 @@ if __name__ == '__main__':
 
     best_results = np.zeros((6, 10))
     headers = ["Mom50", "Mom500", "Mom1000", "NoMom50", "NoMom500", "NoMom1000"]
-    names_column = np.array([["NoMom50"], ["Mom50"], ["NoMom300"], ["Mom300"], ["NoMom600"], ["Mom600"]])
-    bestfeature = np.zeros(6,1)
+    names_column = np.array([["Mom50"], ["Mom500"], ["Mom1000"], ["NoMomentum50"], ["NoMom500"], ["NoMom1000"]])
+    bestfeature = np.zeros(6, 1)
     for i in range(6):
         mean = 0
         for feature in range(9):
             if mean < np.mean(scores[feature, i]):
                 mean = np.mean(scores[feature, i])
                 best_results[i] = scores[feature, i]
-
 
     alfa = .05
     t_statistic = np.zeros((6, 6))
